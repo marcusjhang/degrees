@@ -92,8 +92,42 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    # TODO
-    raise NotImplementedError
+    start = Node(source, None, None)
+    frontier = QueueFrontier() #Use Queue for Breadth-first Search. Stack is used for Depth-first Search
+    frontier.add(start)
+
+    explored = set()
+
+    while True:
+        if frontier.empty():
+            return None
+        
+        node = frontier.remove()
+
+        explored.add(node.state) #node is explored
+
+        for movie_id, person_id in neighbors_for_person(node.state):
+            if not frontier.contains_state(person_id) and person_id not in explored:
+                child = Node(person_id, node, movie_id)
+
+                if child.state == target:
+                    movies = []
+                    people = []
+                    solution = []
+                    while child.parent is not None:
+                        movies.append(child.action)
+                        people.append(child.state)
+                        child = child.parent
+                    movies.reverse()
+                    people.reverse()
+                    x = zip(movies, people)
+                    for movie_id, people_id in x:
+                        solution.append((movie_id, people_id))
+
+                    return solution
+                
+            frontier.add(child)
+
 
 
 def person_id_for_name(name):
